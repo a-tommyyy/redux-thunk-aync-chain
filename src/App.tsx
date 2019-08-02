@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { FunctionComponent } from 'react';
 import './App.css';
+import { HandleThunkActionCreator, connect } from 'react-redux';
+import { StoreInterface } from '.';
+import { incrementCounter, resetCounter, decrementCounter } from './actions';
 
-const App: React.FC = () => {
+interface Props {
+  counter: number;
+  increment: HandleThunkActionCreator<typeof incrementCounter>;
+  decrement: HandleThunkActionCreator<typeof decrementCounter>;
+  reset: HandleThunkActionCreator<typeof resetCounter>;
+}
+
+const mapStateToProps = (state: StoreInterface) => ({
+  counter: state.counter,
+})
+
+const mapDispatchToProps = {
+  increment: incrementCounter,
+  decrement: decrementCounter,
+  reset: resetCounter,
+}
+
+const App: FunctionComponent<Props> = (props: Props) => {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          IncrementalCounterApp
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h2>{props.counter}</h2>
+        <button onClick={() => props.increment()}>increment</button>
+        <button onClick={() => props.decrement()}>decrement</button>
+        <button onClick={() => props.reset()}>reset</button>
       </header>
     </div>
   );
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
